@@ -6,9 +6,9 @@ typedef unsigned long long uint64_t;
 typedef unsigned short uint16_t;
 
 struct pixel{
-  uint8_t R;
-  uint8_t G;
   uint8_t B;
+  uint8_t G;
+  uint8_t R;
   uint8_t Reserved;
 };
 

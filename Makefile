@@ -16,7 +16,7 @@ efi/%.o: efi/%.c
 	${EFICC} ${EFICFLAGS} -o $@ $^
 
 kernel.elf: kernel/kernel.c
-	gcc -ffreestanding -nodefaultlibs -nostdlib kernel/kernel.c -o kernel.elf
+	gcc -ffreestanding -nodefaultlibs -nostdlib -e main kernel/kernel.c -o kernel.elf
 
 clean:
 	rm -f fat.img
