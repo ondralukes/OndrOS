@@ -9,6 +9,8 @@ EFILDFLAGS = -nostdlib -Wl,-dll -shared -Wl,--subsystem,10 -e efi_main
 EFICFILES = $(wildcard efi/*.c)
 EFIOFILES = $(patsubst %.c,%.o,$(EFICFILES))
 
+KERNELCFILES = $(wildcard kernel/*.c)
+
 BOOTX64.efi: ${EFIOFILES}
 	${EFICC} ${EFILDFLAGS} -o BOOTX64.efi ${EFIOFILES} -lgcc
 
@@ -16,7 +18,7 @@ efi/%.o: efi/%.c
 	${EFICC} ${EFICFLAGS} -o $@ $^
 
 kernel.elf: kernel/kernel.c
-	gcc -ffreestanding -nodefaultlibs -nostdlib -e main kernel/kernel.c -o kernel.elf
+	gcc -ffreestanding -nodefaultlibs -nostdlib -e main ${KERNELCFILES} -o kernel.elf
 
 clean:
 	rm -f fat.img
@@ -32,6 +34,7 @@ fat.img: BOOTX64.efi kernel.elf
 	mmd -i fat.img ::/EFI/BOOT
 	mcopy -i fat.img BOOTX64.efi ::/EFI/BOOT
 	mcopy -i fat.img kernel.elf ::/EFI/BOOT/kernel.elf
+	mcopy -i fat.img assets/test.bmp ::/EFI/BOOT/test.bmp
 
 run: fat.img
 	qemu-system-x86_64 -net none --bios /usr/share/ovmf/x64/OVMF.fd -drive file=fat.img,format=raw,index=0,media=disk

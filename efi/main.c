@@ -4,6 +4,8 @@
 #include "elf.h"
 #include "print.h"
 #include "mem.h"
+#include "kernel.h"
+#include "file.h"
 
 
 EFI_STATUS
@@ -112,6 +114,8 @@ efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
     while(1);
     return res;
   }
+  print(ST, L"Loading assets\n\r");
+  void* testImage = loadFile(ST, fp, L"\\EFI\\BOOT\\test.bmp");
   print(ST, L"Opening kernel\n\r");
   EFI_FILE_PROTOCOL* file;
   res = fp->Open(
@@ -243,6 +247,7 @@ efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
     }
     free(ST, buffer);
   }
+  file->Close(file);
   print(ST, L"Success.");
   print(ST, L"\n\rEntrypoint at virtual address ");
   printNum(ST, header.e_entry);
@@ -286,7 +291,7 @@ efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
    while(1);
    return res;
  }
-  typedef void __attribute((sysv_abi)) f(void*, uint64_t);
+  typedef void __attribute((sysv_abi)) f(struct kernel_args);
   f* kernel = (f*)(virtMemBase + header.e_entry);
   for(uint64_t x = 0;x<256;x++){
     for(uint64_t y = 0;y<256;y++){
@@ -296,7 +301,13 @@ efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
       pixel->Green = 0;
     }
   }
-  kernel(frameBuffer, modeInfo->PixelsPerScanLine);
+  struct kernel_args args;
+  args.videoMemory = frameBuffer;
+  args.pixelsPerScanLine = modeInfo->PixelsPerScanLine;
+  args.videoWidth = modeInfo->HorizontalResolution;
+  args.videoHeight = modeInfo->VerticalResolution;
+  args.testImage = testImage;
+  kernel(args);
   for(uint64_t x = 0;x<256;x++){
    for(uint64_t y = 0;y<256;y++){
      EFI_GRAPHICS_OUTPUT_BLT_PIXEL * pixel = frameBuffer + y*modeInfo->PixelsPerScanLine+x;
