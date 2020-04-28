@@ -28,6 +28,7 @@ void setCursorPosition(uint64_t x, uint8_t y){
 void setSize(uint64_t size){
   fontSize = size;
   maxCurX = pixelsPerScanLine/fontSize;
+  maxCurY = screenHeight/(fontSize*2);
 }
 
 void print(uint8_t* s){
@@ -58,6 +59,10 @@ void printChar(uint8_t ch){
   if(ch == '\n'){
     curX = 0;
     curY++;
+    if(curY >= maxCurY){
+      scroll();
+      curY--;
+    }
     return;
   }
   printCharAt(curX, curY, ch);
@@ -65,6 +70,10 @@ void printChar(uint8_t ch){
   if(curX >= maxCurX){
     curX = 0;
     curY++;
+    if(curY >= maxCurY){
+      scroll();
+      curY--;
+    }
   }
 }
 
@@ -98,4 +107,14 @@ void setBackground(uint8_t r, uint8_t g, uint8_t b){
   bg.R = r;
   bg.G = g;
   bg.B = b;
+}
+
+void scroll(){
+  uint64_t lineHeight = fontSize * 2;
+  uint64_t size = (screenHeight - lineHeight)*pixelsPerScanLine;
+  for(uint64_t i = 0;i < size;i++){
+    struct pixel* src = videoMem+i+lineHeight*pixelsPerScanLine;
+    struct pixel* dest = videoMem+i;
+    *dest = *src;
+  }
 }

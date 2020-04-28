@@ -15,6 +15,7 @@ struct pixel bg;
 
 uint64_t fontSize;
 uint64_t maxCurX;
+uint64_t maxCurY;
 uint64_t curX;
 uint64_t curY;
 struct bmp font;
@@ -32,4 +33,5 @@ void setSize(uint64_t size);
 void setForeground(uint8_t r, uint8_t g, uint8_t b);
 void setBackground(uint8_t r, uint8_t g, uint8_t b);
 void setCursorPosition(uint64_t x, uint8_t y);
+void scroll();
 #endif
