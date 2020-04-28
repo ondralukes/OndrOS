@@ -1,28 +1,27 @@
 #include "types.h"
-#include "bmp.h"
-
-struct pixel{
-  uint8_t B;
-  uint8_t G;
-  uint8_t R;
-  uint8_t Reserved;
-} __attribute__((__packed__));
+#include "console.h"
 
 void main(struct kernel_args args){
-  uint16_t j = 0;
-  struct pixel * videoMem = args.videoMemory;
-  struct bmp image;
-  load_bmp(args.testImage, &image);
-  while(1){
-    for(uint32_t x = 0;x<image.width;x++){
-      for(uint32_t y = 0;y<image.height;y++){
-        struct pixel * pixel = videoMem + y*args.pixelsPerScanLine+x;
-        struct bmp_pixel* bmpPixel = bmp_getPixel(&image, x, y);
-        pixel->R = bmpPixel->R;
-        pixel->B = bmpPixel->B;
-        pixel->G = bmpPixel->G;
-      }
-    }
-    j+=16;
-  }
+  consoleInit(&args);
+  clear();
+  print("Resolution ");
+  printNum(args.videoWidth);
+  print("x");
+  printNum(args.videoHeight);
+  print("\n");
+  print("OndrOS Kernel is running and able to print stuff. Yay!\n");
+  setBackground(12, 196, 43);
+  setForeground(255, 0, 89);
+  print("Colorful\n");
+  setBackground(12, 21, 196);
+  setForeground(255, 162, 0);
+  setCursorPosition(2,1);
+  setSize(32);
+  print("Big");
+  setSize(8);
+  setBackground(0,0,0);
+  setForeground(255, 0,0);
+  setCursorPosition(0, 10);
+  print("Halting CPU. Bye Bye.");
+  asm("hlt");
 }

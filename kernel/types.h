@@ -11,6 +11,6 @@ typedef struct kernel_args{
   uint64_t videoHeight;
   uint64_t pixelsPerScanLine;
 
-  void * testImage;
+  void * fontImage;
 };
 #endif

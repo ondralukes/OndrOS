@@ -17,7 +17,7 @@ BOOTX64.efi: ${EFIOFILES}
 efi/%.o: efi/%.c
 	${EFICC} ${EFICFLAGS} -o $@ $^
 
-kernel.elf: kernel/kernel.c
+kernel.elf: ${KERNELCFILES}
 	gcc -ffreestanding -nodefaultlibs -nostdlib -e main ${KERNELCFILES} -o kernel.elf
 
 clean:
@@ -34,7 +34,7 @@ fat.img: BOOTX64.efi kernel.elf
 	mmd -i fat.img ::/EFI/BOOT
 	mcopy -i fat.img BOOTX64.efi ::/EFI/BOOT
 	mcopy -i fat.img kernel.elf ::/EFI/BOOT/kernel.elf
-	mcopy -i fat.img assets/test.bmp ::/EFI/BOOT/test.bmp
+	mcopy -i fat.img assets/font.bmp ::/EFI/BOOT/font.bmp
 
 run: fat.img
 	qemu-system-x86_64 -net none --bios /usr/share/ovmf/x64/OVMF.fd -drive file=fat.img,format=raw,index=0,media=disk

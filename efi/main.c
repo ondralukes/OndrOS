@@ -115,7 +115,7 @@ efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
     return res;
   }
   print(ST, L"Loading assets\n\r");
-  void* testImage = loadFile(ST, fp, L"\\EFI\\BOOT\\test.bmp");
+  void* fontImage = loadFile(ST, fp, L"\\EFI\\BOOT\\font.bmp");
   print(ST, L"Opening kernel\n\r");
   EFI_FILE_PROTOCOL* file;
   res = fp->Open(
@@ -306,7 +306,7 @@ efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
   args.pixelsPerScanLine = modeInfo->PixelsPerScanLine;
   args.videoWidth = modeInfo->HorizontalResolution;
   args.videoHeight = modeInfo->VerticalResolution;
-  args.testImage = testImage;
+  args.fontImage = fontImage;
   kernel(args);
   for(uint64_t x = 0;x<256;x++){
    for(uint64_t y = 0;y<256;y++){
