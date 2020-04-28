@@ -20,15 +20,6 @@ efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
   if(EFI_ERROR(res))
     return res;
 
-  print(ST, L"Press any key to boot, ESC to exit.\n\r");
-  while(1){
-    res = ST->ConIn->ReadKeyStroke(ST->ConIn, &key);
-    if(res == EFI_NOT_READY) continue;
-    ST->ConIn->Reset(ST->ConIn, FALSE);
-    if(key.ScanCode == 0x17) return EFI_SUCCESS;
-    break;
-  }
-
   EFI_GUID gopguid = EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID;
   EFI_GRAPHICS_OUTPUT_PROTOCOL* gop;
   print(ST, L"Locating Graphics Output Protocol.\n\r");
@@ -50,33 +41,43 @@ efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
   }
   print(ST, L"Success\n\r");
   EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE* mode = gop->Mode;
-  print(ST, L"Max mode: ");
-  printNum(ST, mode->MaxMode);
-  print(ST, L"\n\rCurrent mode: ");
-  printNum(ST, mode->Mode);
-  EFI_GRAPHICS_OUTPUT_MODE_INFORMATION* modeInfo = gop->Mode->Info;
-  print(ST, L"\n\rResolution: ");
-  printNum(ST, modeInfo->HorizontalResolution);
-  print(ST, L" x ");
-  printNum(ST, modeInfo->VerticalResolution);
-  print(ST, L"\n\rPixels per scan line: ");
-  printNum(ST, modeInfo->PixelsPerScanLine);
-  print(ST, L"\n\rFrame buffer size: ");
-  printNum(ST, mode->FrameBufferSize);
-
-  print(ST, L"Setting mode 0\n\r");
-  gop->SetMode(gop, 0);
-
-  uint64_t frameSize = mode->FrameBufferSize;
-  EFI_GRAPHICS_OUTPUT_BLT_PIXEL * frameBuffer = mode->FrameBufferBase;
-  for(uint64_t x = 0;x<256;x++){
-    for(uint64_t y = 0;y<256;y++){
-      EFI_GRAPHICS_OUTPUT_BLT_PIXEL * pixel = frameBuffer + y*modeInfo->PixelsPerScanLine+x;
-      pixel->Red = x;
-      pixel->Blue = (x+y)%256;
-      pixel->Green = y;
-    }
+  uint64_t graphicsMode = gop->Mode->MaxMode - 1;
+  uint8_t first = 1;
+  while(1){
+    res = ST->ConIn->ReadKeyStroke(ST->ConIn, &key);
+    if(res == EFI_NOT_READY && first == 0) continue;
+    first = 0;
+    clear(ST);
+    print(ST, L"OndrOS EFI bootloader\n\r");
+    print(ST, L"Use arrows to select graphics mode, ENTER to boot, ESC to exit.\n\r");
+    print(ST, L"Mode ");
+    printNum(ST, graphicsMode);
+    EFI_GRAPHICS_OUTPUT_MODE_INFORMATION* modeInfo;
+    uint64_t infoSize;
+    gop->QueryMode(
+      gop,
+      graphicsMode,
+      &infoSize,
+      &modeInfo
+    );
+    print(ST, L" : ");
+    printNum(ST, modeInfo->HorizontalResolution);
+    print(ST, L" x ");
+    printNum(ST, modeInfo->VerticalResolution);
+    print(ST, L"\n\r");
+    ST->ConIn->Reset(ST->ConIn, FALSE);
+    if(key.ScanCode == 0x17) return EFI_SUCCESS;
+    if(key.ScanCode == 0x01 || key.ScanCode == 0x03) graphicsMode++;
+    if(key.ScanCode == 0x02 || key.ScanCode == 0x04) graphicsMode--;
+    if(key.UnicodeChar == '\r') break;
+    if(graphicsMode == gop->Mode->MaxMode) graphicsMode = 0;
+    if(graphicsMode == -1) graphicsMode = gop->Mode->MaxMode - 1;
   }
+
+  print(ST, L"Setting mode ");
+  printNum(ST, graphicsMode);
+  print(ST, L"\n\r");
+  gop->SetMode(gop, graphicsMode);
 
   print(ST, L"\n\rGetting Loaded Image Protocol\n\r");
   EFI_LOADED_IMAGE_PROTOCOL* loadedImage;
@@ -293,28 +294,12 @@ efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
  }
   typedef void __attribute((sysv_abi)) f(struct kernel_args);
   f* kernel = (f*)(virtMemBase + header.e_entry);
-  for(uint64_t x = 0;x<256;x++){
-    for(uint64_t y = 0;y<256;y++){
-      EFI_GRAPHICS_OUTPUT_BLT_PIXEL * pixel = frameBuffer + y*modeInfo->PixelsPerScanLine+x;
-      pixel->Red = 0;
-      pixel->Blue = 255;
-      pixel->Green = 0;
-    }
-  }
   struct kernel_args args;
-  args.videoMemory = frameBuffer;
-  args.pixelsPerScanLine = modeInfo->PixelsPerScanLine;
-  args.videoWidth = modeInfo->HorizontalResolution;
-  args.videoHeight = modeInfo->VerticalResolution;
+  args.videoMemory = gop->Mode->FrameBufferBase;
+  args.pixelsPerScanLine = gop->Mode->Info->PixelsPerScanLine;
+  args.videoWidth = gop->Mode->Info->HorizontalResolution;
+  args.videoHeight = gop->Mode->Info->VerticalResolution;
   args.fontImage = fontImage;
   kernel(args);
-  for(uint64_t x = 0;x<256;x++){
-   for(uint64_t y = 0;y<256;y++){
-     EFI_GRAPHICS_OUTPUT_BLT_PIXEL * pixel = frameBuffer + y*modeInfo->PixelsPerScanLine+x;
-     pixel->Red = 0;
-     pixel->Blue = 0;
-     pixel->Green = 255;
-   }
- }
   while(1);
 }
