@@ -1,9 +1,4 @@
-typedef unsigned char uint8_t;
-
-
-typedef unsigned long long uint64_t;
-
-typedef unsigned short uint16_t;
+#include "types.h"
 
 struct pixel{
   uint8_t B;
