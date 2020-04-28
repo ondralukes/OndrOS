@@ -46,6 +46,13 @@ efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
   while(1){
     res = ST->ConIn->ReadKeyStroke(ST->ConIn, &key);
     if(res == EFI_NOT_READY && first == 0) continue;
+    ST->ConIn->Reset(ST->ConIn, FALSE);
+    if(key.ScanCode == 0x17) return EFI_SUCCESS;
+    if(key.ScanCode == 0x01 || key.ScanCode == 0x03) graphicsMode++;
+    if(key.ScanCode == 0x02 || key.ScanCode == 0x04) graphicsMode--;
+    if(key.UnicodeChar == '\r') break;
+    if(graphicsMode == gop->Mode->MaxMode) graphicsMode = 0;
+    if(graphicsMode == -1) graphicsMode = gop->Mode->MaxMode - 1;
     first = 0;
     clear(ST);
     print(ST, L"OndrOS EFI bootloader\n\r");
@@ -65,13 +72,6 @@ efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
     print(ST, L" x ");
     printNum(ST, modeInfo->VerticalResolution);
     print(ST, L"\n\r");
-    ST->ConIn->Reset(ST->ConIn, FALSE);
-    if(key.ScanCode == 0x17) return EFI_SUCCESS;
-    if(key.ScanCode == 0x01 || key.ScanCode == 0x03) graphicsMode++;
-    if(key.ScanCode == 0x02 || key.ScanCode == 0x04) graphicsMode--;
-    if(key.UnicodeChar == '\r') break;
-    if(graphicsMode == gop->Mode->MaxMode) graphicsMode = 0;
-    if(graphicsMode == -1) graphicsMode = gop->Mode->MaxMode - 1;
   }
 
   print(ST, L"Setting mode ");
