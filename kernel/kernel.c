@@ -1,5 +1,6 @@
 #include "types.h"
 #include "console.h"
+#include "interrupts.h"
 
 void main(struct kernel_args args){
   consoleInit(&args);
@@ -22,6 +23,12 @@ void main(struct kernel_args args){
   setBackground(0,0,0);
   setForeground(255, 0,0);
   setCursorPosition(0, 10);
-  print("Halting CPU. Bye Bye.");
+  print("Installing interrputs.\n");
+  installInterrupts();
+  print("Testing interrupts.\n");
+  asm("int $2");
+  asm("int $3");
+  asm("int $4");
+  print("Halting CPU. Bye Bye.\n");
   asm("hlt");
 }

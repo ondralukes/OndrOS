@@ -200,7 +200,7 @@ efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
   EFI_PHYSICAL_ADDRESS virtMemBase = 0x400000;
   res = ST->BootServices->AllocatePages(
     AllocateAnyPages,
-    EfiLoaderData,
+    EfiLoaderCode,
     pages,
     &virtMemBase
   );
