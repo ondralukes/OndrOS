@@ -29,6 +29,7 @@ void print(uint8_t* s);
 void printNum(uint64_t n);
 void printChar(uint8_t ch);
 void printCharAt(uint64_t x, uint64_t y, uint8_t ch);
+void setConsolePrefix(char * prefix);
 void setSize(uint64_t size);
 void setForeground(uint8_t r, uint8_t g, uint8_t b);
 void setBackground(uint8_t r, uint8_t g, uint8_t b);

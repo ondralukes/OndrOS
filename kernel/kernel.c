@@ -1,5 +1,6 @@
 #include "types.h"
 #include "console.h"
+#include "keyboard.h"
 #include "interrupts.h"
 #include "time.h"
 
@@ -24,10 +25,13 @@ void main(struct kernel_args args){
   setBackground(0,0,0);
   setForeground(255, 0,0);
   setCursorPosition(0, 10);
-  print("Installing interrputs.\n");
+  setConsolePrefix("[CPU setup] ");
+  print("\nInstalling interrputs.\n");
   installInterrupts();
   print("Starting timer.\n");
   initTimer();
+  print("Initializing keyboard.\n");
+  initKeyboard();
   print("Testing interrupts.\n");
   asm("sti");
   asm("int $2");
@@ -36,6 +40,9 @@ void main(struct kernel_args args){
   print("The time is now ");
   printNum(getMicroseconds());
   print(" us\n");
-  print("Halting CPU. Bye Bye.\n");
+  print("Halting CPU.");
+  setConsolePrefix("kernel> ");
+  setForeground(255, 255, 255);
+  print("\n");
   asm("hlt");
 }

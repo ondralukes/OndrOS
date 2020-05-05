@@ -1,5 +1,7 @@
 #include "console.h"
 
+char * consoleLinePrefix = "";
+
 void consoleInit(struct kernel_args* args){
   videoMem = args->videoMemory;
   pixelsPerScanLine = args->pixelsPerScanLine;
@@ -29,6 +31,10 @@ void setSize(uint64_t size){
   fontSize = size;
   maxCurX = pixelsPerScanLine/fontSize;
   maxCurY = screenHeight/(fontSize*2);
+}
+
+void setConsolePrefix(char * prefix){
+  consoleLinePrefix = prefix;
 }
 
 void print(uint8_t* s){
@@ -63,6 +69,16 @@ void printChar(uint8_t ch){
       scroll();
       curY--;
     }
+    print(consoleLinePrefix);
+    return;
+  }
+  //Backspace
+  if(ch == 0x08){
+    if(curX != 0){
+      curX--;
+      printChar(' ');
+      curX--;
+    }
     return;
   }
   printCharAt(curX, curY, ch);
@@ -74,6 +90,7 @@ void printChar(uint8_t ch){
       scroll();
       curY--;
     }
+    print(consoleLinePrefix);
   }
 }
 
