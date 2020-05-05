@@ -1,6 +1,7 @@
 #include "types.h"
 #include "console.h"
 #include "interrupts.h"
+#include "time.h"
 
 void main(struct kernel_args args){
   consoleInit(&args);
@@ -25,10 +26,16 @@ void main(struct kernel_args args){
   setCursorPosition(0, 10);
   print("Installing interrputs.\n");
   installInterrupts();
+  print("Starting timer.\n");
+  initTimer();
   print("Testing interrupts.\n");
+  asm("sti");
   asm("int $2");
   asm("int $3");
   asm("int $4");
+  print("The time is now ");
+  printNum(getMicroseconds());
+  print(" us\n");
   print("Halting CPU. Bye Bye.\n");
   asm("hlt");
 }

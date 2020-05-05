@@ -38,4 +38,4 @@ clean:
 	rm -f kernel.elf
 
 run: fat.img
-	qemu-system-x86_64 -monitor stdio -no-reboot -no-shutdown -d int -net none --bios /usr/share/ovmf/x64/OVMF.fd -drive file=fat.img,format=raw,index=0,media=disk
+	qemu-system-x86_64 -monitor stdio -no-reboot -no-shutdown -net none --bios /usr/share/ovmf/x64/OVMF.fd -drive file=fat.img,format=raw,index=0,media=disk

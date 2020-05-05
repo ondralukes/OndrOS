@@ -1,4 +1,5 @@
 [extern isrHandler]
+[extern irqHandler]
 
 isr_common:
   ;save state
@@ -12,6 +13,32 @@ isr_common:
   push rax
 
   call isrHandler
+
+  pop rax
+  pop rcx
+  pop rdx
+  pop rbx
+  pop rsp
+  pop rbp
+  pop rsi
+  pop rdi
+
+  add rsp, 16
+  sti
+  iretq
+
+irq_common:
+  ;save state
+  push rdi
+  push rsi
+  push rbp
+  push rsp
+  push rbx
+  push rdx
+  push rcx
+  push rax
+
+  call irqHandler
 
   pop rax
   pop rcx
@@ -58,6 +85,23 @@ isr_common:
   global isr29
   global isr30
   global isr31
+
+  global irq0
+  global irq1
+  global irq2
+  global irq3
+  global irq4
+  global irq5
+  global irq6
+  global irq7
+  global irq8
+  global irq9
+  global irq10
+  global irq11
+  global irq12
+  global irq13
+  global irq14
+  global irq15
 
   ; 0: Divide By Zero Exception
   isr0:
@@ -276,3 +320,99 @@ isr_common:
       push dword 0
       push dword 31
       jmp isr_common
+
+  irq0:
+    cli
+    push dword 0
+    push dword 32
+    jmp irq_common
+
+  irq1:
+    cli
+    push dword 0
+    push dword 33
+    jmp irq_common
+
+  irq2:
+    cli
+    push dword 0
+    push dword 34
+    jmp irq_common
+
+  irq3:
+    cli
+    push dword 0
+    push dword 35
+    jmp irq_common
+
+  irq4:
+    cli
+    push dword 0
+    push dword 36
+    jmp irq_common
+
+  irq5:
+    cli
+    push dword 0
+    push dword 37
+    jmp irq_common
+
+  irq6:
+    cli
+    push dword 0
+    push dword 38
+    jmp irq_common
+
+  irq7:
+    cli
+    push dword 0
+    push dword 39
+    jmp irq_common
+
+  irq8:
+    cli
+    push dword 0
+    push dword 40
+    jmp irq_common
+
+  irq9:
+    cli
+    push dword 0
+    push dword 41
+    jmp irq_common
+
+  irq10:
+    cli
+    push dword 0
+    push dword 42
+    jmp irq_common
+
+  irq11:
+    cli
+    push dword 0
+    push dword 43
+    jmp irq_common
+
+  irq12:
+    cli
+    push dword 0
+    push dword 44
+    jmp irq_common
+
+  irq13:
+    cli
+    push dword 0
+    push dword 45
+    jmp irq_common
+
+  irq14:
+    cli
+    push dword 0
+    push dword 46
+    jmp irq_common
+
+  irq15:
+    cli
+    push dword 0
+    push dword 47
+    jmp irq_common

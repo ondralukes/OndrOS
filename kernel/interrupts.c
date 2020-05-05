@@ -1,6 +1,22 @@
 #include "interrupts.h"
 
 void installInterrupts(){
+  //Remap PIC
+  byteOut(0x20, 0x11);
+  byteOut(0xA0, 0x11);
+
+  byteOut(0x21, 0x20);
+  byteOut(0xA1, 0x28);
+
+  byteOut(0x21, 0x04);
+  byteOut(0xA1, 0x02);
+
+  byteOut(0x21, 0x01);
+  byteOut(0xA1, 0x01);
+
+  byteOut(0x21, 0x0);
+  byteOut(0xA1, 0x0);
+
   setInterrupt(0, (uint64_t) isr0);
   setInterrupt(1, (uint64_t) isr1);
   setInterrupt(2, (uint64_t) isr2);
@@ -34,6 +50,23 @@ void installInterrupts(){
   setInterrupt(30, (uint64_t) isr30);
   setInterrupt(31, (uint64_t) isr31);
 
+  setInterrupt(32, (uint64_t) irq0);
+  setInterrupt(33, (uint64_t) irq1);
+  setInterrupt(34, (uint64_t) irq2);
+  setInterrupt(35, (uint64_t) irq3);
+  setInterrupt(36, (uint64_t) irq4);
+  setInterrupt(37, (uint64_t) irq5);
+  setInterrupt(38, (uint64_t) irq6);
+  setInterrupt(39, (uint64_t) irq7);
+  setInterrupt(40, (uint64_t) irq8);
+  setInterrupt(41, (uint64_t) irq9);
+  setInterrupt(42, (uint64_t) irq10);
+  setInterrupt(43, (uint64_t) irq11);
+  setInterrupt(44, (uint64_t) irq12);
+  setInterrupt(45, (uint64_t) irq13);
+  setInterrupt(46, (uint64_t) irq14);
+  setInterrupt(47, (uint64_t) irq15);
+
   applyInterrupts();
 }
 
@@ -53,8 +86,32 @@ void applyInterrupts(){
   asm volatile("lidt (%0)" : : "r" (&interruptTable));
 }
 
+void setInterruptHandler(int index, isr isr){
+  isrs[index] = isr;
+}
+
 void isrHandler(registers regs){
-  print("Interrupt #");
-  printNum(regs.intNum);
-  print("\n");
+  if(isrs[regs.intNum] != 0){
+    isrs[regs.intNum](regs);
+  } else {
+    print("Unhandled interrupt #");
+    printNum(regs.intNum);
+    print("\n");
+  }
+}
+
+void irqHandler(registers regs){
+  //Send End Of Interrupt
+  if(regs.intNum >= 40){
+    byteOut(0xa0, 0x20);
+  } else {
+    byteOut(0x20, 0x20);
+  }
+  if(isrs[regs.intNum] != 0){
+    isrs[regs.intNum](regs);
+  } else {
+    print("Unhandled interrupt #");
+    printNum(regs.intNum);
+    print("\n");
+  }
 }

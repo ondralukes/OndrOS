@@ -1,6 +1,7 @@
 #ifndef INTERRUPTS_H
 #define INTERRUPTS_H
 #include "console.h"
+#include "port.h"
 
 typedef struct {
   uint16_t offset1;
@@ -23,14 +24,19 @@ typedef struct {
   uint32_t rip, cs, eflags, useresp, ss;
 } registers;
 
+typedef void (*isr)(registers);
+
 int_gate interrupts[256];
 int_table interruptTable;
+isr isrs[256];
 
 void installInterrupts();
 void setInterrupt(int index, uint64_t handler);
+void setInterruptHandler(int index, isr isr);
 void applyInterrupts();
 
 void isrHandler(registers regs);
+void irqHandler(registers regs);
 
 extern void isr0();
 extern void isr1();
@@ -64,4 +70,21 @@ extern void isr28();
 extern void isr29();
 extern void isr30();
 extern void isr31();
+
+extern void irq0();
+extern void irq1();
+extern void irq2();
+extern void irq3();
+extern void irq4();
+extern void irq5();
+extern void irq6();
+extern void irq7();
+extern void irq8();
+extern void irq9();
+extern void irq10();
+extern void irq11();
+extern void irq12();
+extern void irq13();
+extern void irq14();
+extern void irq15();
 #endif

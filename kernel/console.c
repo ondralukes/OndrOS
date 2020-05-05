@@ -117,4 +117,9 @@ void scroll(){
     struct pixel* dest = videoMem+i;
     *dest = *src;
   }
+  uint64_t lineSize = lineHeight*pixelsPerScanLine;
+  for(uint64_t i = 0;i < size;i++){
+    struct pixel* p = videoMem+size+i;
+    *p = bg;
+  }
 }
