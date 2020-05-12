@@ -1,6 +1,6 @@
 #include "console.h"
 
-char * consoleLinePrefix = "";
+char * consoleLinePrefix;
 
 void consoleInit(struct kernel_args* args){
   videoMem = args->videoMemory;
@@ -11,6 +11,7 @@ void consoleInit(struct kernel_args* args){
   setSize(8);
   setForeground(255,255,255);
   setBackground(0,0,0);
+  setConsolePrefix("");
 }
 
 void clear(){
@@ -35,6 +36,12 @@ void setSize(uint64_t size){
 
 void setConsolePrefix(char * prefix){
   consoleLinePrefix = prefix;
+  uint64_t len = 0;
+  while(*prefix != '\0'){
+    len++;
+    prefix++;
+  }
+  minCurX = len;
 }
 
 void print(uint8_t* s){
@@ -74,7 +81,7 @@ void printChar(uint8_t ch){
   }
   //Backspace
   if(ch == 0x08){
-    if(curX != 0){
+    if(curX > minCurX){
       curX--;
       printChar(' ');
       curX--;

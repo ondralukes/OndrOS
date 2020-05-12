@@ -104,14 +104,9 @@ void irqHandler(registers regs){
   //Send End Of Interrupt
   if(regs.intNum >= 40){
     byteOut(0xa0, 0x20);
-  } else {
-    byteOut(0x20, 0x20);
   }
+  byteOut(0x20, 0x20);
   if(isrs[regs.intNum] != 0){
     isrs[regs.intNum](regs);
-  } else {
-    print("Unhandled interrupt #");
-    printNum(regs.intNum);
-    print("\n");
   }
 }

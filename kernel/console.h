@@ -16,6 +16,7 @@ struct pixel bg;
 uint64_t fontSize;
 uint64_t maxCurX;
 uint64_t maxCurY;
+uint64_t minCurX;
 uint64_t curX;
 uint64_t curY;
 struct bmp font;

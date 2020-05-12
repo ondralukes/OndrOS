@@ -11,6 +11,8 @@ void main(struct kernel_args args){
   printNum(args.videoWidth);
   print("x");
   printNum(args.videoHeight);
+  print(" PPSL ");
+  printNum(args.pixelsPerScanLine);
   print("\n");
   print("OndrOS Kernel is running and able to print stuff. Yay!\n");
   setBackground(12, 196, 43);
