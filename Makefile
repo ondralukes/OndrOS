@@ -9,7 +9,7 @@ EFILDFLAGS = -nostdlib -Wl,-dll -shared -Wl,--subsystem,10 -e efi_main
 EFICFILES = $(wildcard efi/*.c)
 EFIOFILES = $(patsubst %.c,%.o,$(EFICFILES))
 
-KERNELCFILES = $(wildcard kernel/*.c)
+KERNELCFILES = $(wildcard kernel/*.c cpu/*.c utils/*.c io/*.c)
 
 fat.img: BOOTX64.efi kernel.elf
 	dd if=/dev/zero of=fat.img bs=1k count=1440
@@ -27,8 +27,8 @@ efi/%.o: efi/%.c
 	${EFICC} ${EFICFLAGS} -o $@ $^
 
 kernel.elf: ${KERNELCFILES}
-	nasm -felf64 -o kernel/isr.o kernel/isr.asm
-	gcc -ffreestanding -nodefaultlibs -nostdlib -e main kernel/isr.o ${KERNELCFILES} -o kernel.elf
+	nasm -felf64 -o cpu/isr.o cpu/isr.asm
+	gcc -ffreestanding -nodefaultlibs -nostdlib -e main cpu/isr.o ${KERNELCFILES} -o kernel.elf
 
 clean:
 	rm -f fat.img

@@ -1,6 +1,6 @@
 #ifndef INTERRUPTS_H
 #define INTERRUPTS_H
-#include "console.h"
+#include "../io/console.h"
 #include "port.h"
 
 typedef struct {

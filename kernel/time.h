@@ -1,7 +1,7 @@
 #ifndef TIME_H
 #define TIME_H
-#include "interrupts.h"
-#include "port.h"
+#include "../cpu/interrupts.h"
+#include "../cpu/port.h"
 
 void initTimer();
 

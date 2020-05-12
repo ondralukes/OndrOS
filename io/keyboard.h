@@ -2,7 +2,7 @@
 #define KEYBOARD_H
 
 #include "console.h"
-#include "interrupts.h"
+#include "../cpu/interrupts.h"
 
 void initKeyboard();
 

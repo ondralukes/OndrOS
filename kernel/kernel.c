@@ -1,7 +1,7 @@
 #include "types.h"
-#include "console.h"
-#include "keyboard.h"
-#include "interrupts.h"
+#include "../io/console.h"
+#include "../io/keyboard.h"
+#include "../cpu/interrupts.h"
 #include "time.h"
 
 void main(struct kernel_args args){

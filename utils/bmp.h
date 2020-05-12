@@ -1,4 +1,4 @@
-#include "types.h"
+#include "../kernel/types.h"
 
 struct bmp_pixel{
   uint8_t B;

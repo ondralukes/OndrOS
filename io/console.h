@@ -1,7 +1,7 @@
 #ifndef CONSOLE_H
 #define CONSOLE_H
 
-#include "bmp.h"
+#include "../utils/bmp.h"
 
 struct pixel{
   uint8_t B;
