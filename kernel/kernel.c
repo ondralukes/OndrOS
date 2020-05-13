@@ -34,14 +34,12 @@ void main(struct kernel_args args){
   initTimer();
   print("Initializing keyboard.\n");
   initKeyboard();
-  print("Testing interrupts.\n");
+  print("Enabling interrupts.\n");
   asm("sti");
-  asm("int $2");
-  asm("int $3");
-  asm("int $4");
   print("The time is now ");
   printNum(getMicroseconds());
   print(" us\n");
+  print("Press 'e' to divide by zero.\n");
   print("Halting CPU.");
   setConsolePrefix("kernel> ");
   setForeground(255, 255, 255);

@@ -4,6 +4,7 @@ void keyboardCallback(registers regs){
   uint8_t scanCode = byteIn(0x60);
   uint8_t ch = scanCodeToChar(scanCode);
   if(ch != 0x0) printChar(ch);
+  if(ch == 'e') ch = 5/0;
 }
 
 void initKeyboard(){

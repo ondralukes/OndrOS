@@ -147,3 +147,32 @@ void scroll(){
     *p = bg;
   }
 }
+
+void beginError(){
+  setBackground(255, 0, 0);
+  clear();
+  setCursorPosition(0, 0);
+  setConsolePrefix("");
+  uint64_t headingSize = pixelsPerScanLine/32;
+  setSize(headingSize);
+  for(uint64_t x = 0;x<32;x++){
+    if((x) % 2 == 0){
+      setBackground(255,255,0);
+    } else {
+      setBackground(0, 0, 0);
+    }
+    printCharAt(x,0,' ');
+    printCharAt(x,maxCurY-1, ' ');
+  }
+  setBackground(255, 0, 0);
+  setForeground(255,255,255);
+  setCursorPosition(1,1);
+  print("Uh Oh!");
+  setSize(8);
+  setConsolePrefix(" ");
+  uint64_t startRow = 2*headingSize/8;
+  setCursorPosition(1,startRow);
+  print("The kernel has died.\n");
+  print("Kernel has run into trouble and cannot continue its execution.\n");
+  print("Here's a message from the kernel with further informations and instructions:\n\n");
+}

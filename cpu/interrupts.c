@@ -94,9 +94,36 @@ void isrHandler(registers regs){
   if(isrs[regs.intNum] != 0){
     isrs[regs.intNum](regs);
   } else {
-    print("Unhandled interrupt #");
+    char* exceptions[32];
+    exceptions[0] = "Division by zero";
+    exceptions[1] = "Debug";
+    exceptions[2] = "Non-maskable interrupt";
+    exceptions[3] = "Breakpoint";
+    exceptions[4] = "Overflow";
+    exceptions[5] = "Bound Range Exceeded";
+    exceptions[6] = "Invalid Opcode";
+    exceptions[7] = "Device not available";
+    exceptions[8] = "Double fault";
+    exceptions[9] = "Coprocessor Segment Overrrun";
+    exceptions[10] = "Invalid TSS";
+    exceptions[11] = "Segment not present";
+    exceptions[12] = "Stack-Segment fault";
+    exceptions[13] = "General Protection Fault";
+    exceptions[14] = "Page Fault";
+    exceptions[15] = "Reserved";
+    exceptions[16] = "x87 Floating-Point Exception";
+    exceptions[17] = "Alignment Check";
+    exceptions[18] = "Machine Check";
+    exceptions[19] = "SIMD Floating-Point Exception";
+    exceptions[20] = "Virtualization Exception";
+    exceptions[30] = "Security Exception";
+    beginError();
+    print("Kernel received interrupt #");
     printNum(regs.intNum);
-    print("\n");
+    print(" which means ");
+    print(exceptions[regs.intNum]);
+    print(".\n");
+    asm("hlt");
   }
 }
 
