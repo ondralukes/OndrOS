@@ -19,7 +19,7 @@ typedef struct {
 } __attribute__((packed)) int_table;
 
 typedef struct {
-  uint64_t rax, rcx, rdx, rbx, rsp, rbp, rsi, rdi;
+  uint64_t rax, rcx, rdx, rbx, rsi, rdi;
   uint64_t intNum, errorCode;
   uint64_t rip;
   uint32_t cs, eflags, useresp, ss;

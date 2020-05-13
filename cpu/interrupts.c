@@ -131,8 +131,6 @@ void isrHandler(registers regs){
     print(" rcx="); printHex(regs.rcx);
 
     print("\nrdx="); printHex(regs.rdx);
-    print(" rsp="); printHex(regs.rsp);
-    print(" rbp="); printHex(regs.rbp);
 
     print("\nrsi="); printHex(regs.rsi);
     print(" rdi="); printHex(regs.rdi);

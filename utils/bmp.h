@@ -1,5 +1,7 @@
-#include "../kernel/types.h"
+#ifndef BMP_H
+#define BMP_H
 
+#include "../kernel/types.h"
 struct bmp_pixel{
   uint8_t B;
   uint8_t G;
@@ -34,3 +36,4 @@ struct bmp_header{
 void load_bmp(void* file, struct bmp* bmp);
 
 struct bmp_pixel* bmp_getPixel(struct bmp* bmp, uint64_t x, uint64_t y);
+#endif

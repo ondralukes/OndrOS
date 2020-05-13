@@ -143,7 +143,14 @@ void printCharAt(uint64_t x, uint64_t y, uint8_t ch){
       struct pixel* p = videoMem+(destY+dy)*pixelsPerScanLine+destX+dx;
       uint64_t bmpX = sourceX + dx*16/fontSize;
       uint64_t bmpY = sourceY + dy*32/(fontSize*2);
-      struct bmp_pixel* bmpPix = bmp_getPixel(&font, bmpX, bmpY);
+      struct bmp_pixel* bmpPix;
+
+      //bmp_getPixel sometimes returns invalid value, when interrupted by interrupt
+      //Run until a valid value is returned
+      while(1){
+        bmpPix = bmp_getPixel(&font, bmpX, bmpY);
+        if((uint64_t) bmpPix - (uint64_t)font.data < 256*512*4) break;
+      }
       if(bmpPix->R == 255){
         *p = fg;
       } else {

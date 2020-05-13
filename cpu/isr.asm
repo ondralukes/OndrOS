@@ -5,8 +5,6 @@ isr_common:
   ;save state
   push rdi
   push rsi
-  push rbp
-  push rsp
   push rbx
   push rdx
   push rcx
@@ -18,8 +16,6 @@ isr_common:
   pop rcx
   pop rdx
   pop rbx
-  pop rsp
-  pop rbp
   pop rsi
   pop rdi
 
@@ -31,8 +27,6 @@ irq_common:
   ;save state
   push rdi
   push rsi
-  push rbp
-  push rsp
   push rbx
   push rdx
   push rcx
@@ -44,8 +38,6 @@ irq_common:
   pop rcx
   pop rdx
   pop rbx
-  pop rsp
-  pop rbp
   pop rsi
   pop rdi
 
