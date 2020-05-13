@@ -28,6 +28,8 @@ void consoleInit(struct kernel_args* args);
 void clear();
 void print(uint8_t* s);
 void printNum(uint64_t n);
+void printHex(uint64_t n);
+void printHexByte(uint8_t b);
 void printChar(uint8_t ch);
 void printCharAt(uint64_t x, uint64_t y, uint8_t ch);
 void setConsolePrefix(char * prefix);

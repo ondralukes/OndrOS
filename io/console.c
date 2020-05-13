@@ -68,6 +68,38 @@ void printNum(uint64_t n){
   }
 }
 
+void printHex(uint64_t n){
+  print("0x");
+  if(n == 0UL){
+    printChar('0');
+    return;
+  }
+  uint64_t e = 0x1000000000000000;
+  uint8_t started = 0;
+  while(e > 0){
+    uint64_t p = n/e;
+    n -= p*e;
+    e = e/16;
+    if(p == 0 && started == 0) continue;
+    started = 1;
+    char c = '0' + p;
+    if(p>=10) c += 39;
+    printChar(c);
+  }
+}
+
+void printHexByte(uint8_t b){
+  uint8_t d = 0x10;
+  while(d != 0){
+    uint64_t p = b/d;
+    b-= p*d;
+    d /= 16;
+    char c = '0' + p;
+    if(p>=10) c += 39;
+    printChar(c);
+  }
+}
+
 void printChar(uint8_t ch){
   if(ch == '\n'){
     curX = 0;

@@ -123,6 +123,35 @@ void isrHandler(registers regs){
     print(" which means ");
     print(exceptions[regs.intNum]);
     print(".\n");
+    print("Error code is ");
+    printHex(regs.errorCode);
+    print("\nRegisters:\n");
+    print("rax="); printHex(regs.rax);
+    print(" rbx="); printHex(regs.rbx);
+    print(" rcx="); printHex(regs.rcx);
+
+    print("\nrdx="); printHex(regs.rdx);
+    print(" rsp="); printHex(regs.rsp);
+    print(" rbp="); printHex(regs.rbp);
+
+    print("\nrsi="); printHex(regs.rsi);
+    print(" rdi="); printHex(regs.rdi);
+    print(" rip="); printHex(regs.rip);
+
+    print("\ncs="); printHex(regs.cs);
+    print(" flags="); printHex(regs.eflags);
+    print("\n128 bytes from RIP:\n");
+    uint8_t *ptr = regs.rip;
+    for(uint64_t i = 0;i<128;i++){
+      if(i%16 == 0){
+        print("\nRIP+");
+        printHex(i);
+        print(": ");
+      }
+      printHexByte(*ptr);
+      print(" ");
+      ptr++;
+    }
     asm("hlt");
   }
 }

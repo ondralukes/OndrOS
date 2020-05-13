@@ -19,9 +19,10 @@ typedef struct {
 } __attribute__((packed)) int_table;
 
 typedef struct {
-  uint64_t rdi, rsi, rbp, rsp, rbx, rdx, rcx, rax;
-  uint32_t intNum, errorCode;
-  uint32_t rip, cs, eflags, useresp, ss;
+  uint64_t rax, rcx, rdx, rbx, rsp, rbp, rsi, rdi;
+  uint64_t intNum, errorCode;
+  uint64_t rip;
+  uint32_t cs, eflags, useresp, ss;
 } registers;
 
 typedef void (*isr)(registers);
