@@ -139,7 +139,7 @@ void isrHandler(registers regs){
     print("\ncs="); printHex(regs.cs);
     print(" flags="); printHex(regs.eflags);
     print("\n128 bytes from RIP:\n");
-    uint8_t *ptr = regs.rip;
+    uint8_t *ptr = (uint8_t*)regs.rip;
     for(uint64_t i = 0;i<128;i++){
       if(i%16 == 0){
         print("\nRIP+");

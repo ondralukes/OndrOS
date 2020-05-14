@@ -213,5 +213,5 @@ void beginError(){
   setCursorPosition(1,startRow);
   print("The kernel has died.\n");
   print("Kernel has run into trouble and cannot continue its execution.\n");
-  print("Here's a message from the kernel with further informations and instructions:\n\n");
+  print("Here's a message from the kernel with further information and instructions:\n\n");
 }

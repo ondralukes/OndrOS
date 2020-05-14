@@ -26,7 +26,7 @@ efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
   res = ST->BootServices->LocateProtocol(
     &gopguid,
     NULL,
-    &gop
+    (void**)&gop
   );
   if(EFI_ERROR(res)){
     if(res == EFI_NOT_FOUND){
@@ -46,7 +46,7 @@ efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
   ST->BootServices->HandleProtocol(
     ImageHandle,
     &loadedImageGuid,
-    &loadedImage
+    (void**)&loadedImage
   );
   if(EFI_ERROR(res)){
     print(ST, L"Failed\n\r");
@@ -61,7 +61,7 @@ efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
   res = ST->BootServices->HandleProtocol(
     loadedImage->DeviceHandle,
     &fsguid,
-    &fs
+    (void**)&fs
   );
   if(EFI_ERROR(res)){
     print(ST, L"Failed\n\r");
@@ -175,7 +175,7 @@ efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
 
   print(ST, L"\n\rZeroing memory.\n\r");
   for(uint64_t i = 0;i<pages*4096;i+=sizeof(uint64_t)){
-    uint64_t* ptr = virtMemBase + i;
+    uint64_t* ptr = (uint64_t*)(virtMemBase + i);
     *ptr = 0;
   }
 
@@ -204,7 +204,7 @@ efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
       return res;
     }
     ST->BootServices->CopyMem(
-      virtMemBase + pheader->p_vaddr,
+      (void*)(virtMemBase + pheader->p_vaddr),
       buffer,
       size
     );
@@ -262,11 +262,12 @@ efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
   typedef void __attribute((sysv_abi)) f(struct kernel_args);
   f* kernel = (f*)(virtMemBase + header.e_entry);
   struct kernel_args args;
-  args.videoMemory = gop->Mode->FrameBufferBase;
+  args.videoMemory = (void*)gop->Mode->FrameBufferBase;
   args.pixelsPerScanLine = gop->Mode->Info->PixelsPerScanLine;
   args.videoWidth = gop->Mode->Info->HorizontalResolution;
   args.videoHeight = gop->Mode->Info->VerticalResolution;
   args.fontImage = fontImage;
+  args.safeMemoryOffset = (void*)(virtMemBase + pages*4096 + 1);
   kernel(args);
   while(1);
 }
