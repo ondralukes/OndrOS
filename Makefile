@@ -10,6 +10,8 @@ EFICFILES = $(wildcard efi/*.c)
 EFIOFILES = $(patsubst %.c,%.o,$(EFICFILES))
 
 KERNELCFILES = $(wildcard kernel/*.c cpu/*.c utils/*.c io/*.c)
+KERNELASMFILES = $(wildcard cpu/*.asm)
+KERNELASMOFILES = $(patsubst %.asm,%.o,$(KERNELASMFILES))
 
 fat.img: BOOTX64.efi kernel.elf
 	dd if=/dev/zero of=fat.img bs=1k count=1440
@@ -26,9 +28,11 @@ BOOTX64.efi: ${EFIOFILES}
 efi/%.o: efi/%.c
 	${EFICC} ${EFICFLAGS} -o $@ $^
 
-kernel.elf: ${KERNELCFILES}
-	nasm -felf64 -o cpu/isr.o cpu/isr.asm
-	gcc -ffreestanding -nodefaultlibs -nostdlib -e main cpu/isr.o ${KERNELCFILES} -o kernel.elf
+cpu/%.o: cpu/%.asm
+		nasm -felf64 -o $@ $^
+
+kernel.elf: $(KERNELCFILES) $(KERNELASMOFILES)
+	gcc -ffreestanding -nodefaultlibs -nostdlib -e main $(KERNELASMOFILES) ${KERNELCFILES} -o kernel.elf
 
 clean:
 	rm -f fat.img

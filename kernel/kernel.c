@@ -2,13 +2,21 @@
 #include "../io/console.h"
 #include "../io/keyboard.h"
 #include "../cpu/interrupts.h"
+#include "../cpu/gdt.h"
 #include "time.h"
 #include "memory.h"
 
-void main(struct kernel_args args){
+struct kernel_args args;
+void stage2();
+void main(struct kernel_args a){
+  args = a;
   consoleInit(&args);
   clear();
   memoryInit(args.safeMemoryOffset);
+  loadGdt((uint64_t)&stage2);
+}
+
+void stage2(){
   print("Resolution ");
   printNum(args.videoWidth);
   print("x");

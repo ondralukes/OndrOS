@@ -74,7 +74,7 @@ void setInterrupt(int index, uint64_t handler){
   interrupts[index].offset1 = handler&0xffff;
   interrupts[index].offset2 = (handler>>16)&0xffff;
   interrupts[index].offset3 = (handler>>32)&0xffffffff;
-  interrupts[index].seg = 0x38; //Code segment
+  interrupts[index].seg = KERNEL_CS; //Code segment
   interrupts[index].zero = 0;
   interrupts[index].ist = 0;
   interrupts[index].flags = 0x8e; //kernel, 32bit handler
