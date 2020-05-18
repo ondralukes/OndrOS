@@ -1,22 +1,24 @@
+#include "kernel.h"
 #include "types.h"
 #include "../io/console.h"
 #include "../io/keyboard.h"
 #include "../cpu/interrupts.h"
-#include "../cpu/gdt.h"
+#include "../cpu/init.h"
 #include "time.h"
 #include "memory.h"
 
-struct kernel_args args;
-void stage2();
 void main(struct kernel_args a){
   args = a;
   consoleInit(&args);
   clear();
   memoryInit(args.safeMemoryOffset);
+  kernelStackBottom = malloc(2048);
+  kernelStackTop = kernelStackBottom + 2048 - 8;
   loadGdt((uint64_t)&stage2);
 }
 
 void stage2(){
+  loadTss();
   print("Resolution ");
   printNum(args.videoWidth);
   print("x");

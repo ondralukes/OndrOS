@@ -1,7 +1,7 @@
 #ifndef INTERRUPTS_H
 #define INTERRUPTS_H
 #include "../io/console.h"
-#include "gdt.h"
+#include "init.h"
 #include "port.h"
 
 typedef struct {
