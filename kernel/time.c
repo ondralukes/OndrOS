@@ -1,9 +1,21 @@
 #include "time.h"
 
 uint64_t timerTicks = 0;
+uint64_t ticksSinceLastSched = 0;
+uint64_t ticksSinceLastFlush = 0;
 const uint64_t freq = 14914;
-static void timerTick(registers reg){
+static void timerTick(registers regs){
   timerTicks++;
+  ticksSinceLastSched++;
+  ticksSinceLastFlush++;
+  if(ticksSinceLastFlush >= (FLUSH_INTERVAL*freq)/1000000){
+    ticksSinceLastFlush = 0;
+    flushProcessOut();
+  }
+  if(ticksSinceLastSched >= (SCHEDULER_INTERVAL*freq)/1000000){
+    ticksSinceLastSched = 0;
+    schedulerTick(regs);
+  }
 }
 
 void initTimer(){

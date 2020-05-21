@@ -5,6 +5,9 @@ void load_bmp(void* file, struct bmp* bmp){
   bmp->width = header->width;
   bmp->height = header->height;
   bmp->data = file + header->offset;
+
+  //Protect image data
+  mallocAt((uint64_t)bmp->data, header->width*header->height*3);
 }
 
 struct bmp_pixel* bmp_getPixel(struct bmp* bmp, uint64_t x, uint64_t y){

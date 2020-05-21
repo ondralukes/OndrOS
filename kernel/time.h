@@ -2,6 +2,7 @@
 #define TIME_H
 #include "../cpu/interrupts.h"
 #include "../cpu/port.h"
+#include "scheduler.h"
 
 void initTimer();
 

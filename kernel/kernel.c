@@ -7,18 +7,42 @@
 #include "time.h"
 #include "memory.h"
 
+void wait(){
+  uint64_t x = 0;
+  for(uint64_t i = 0;i<100000;i++){
+    x+=i;
+  }
+}
+
+void testProcessA(stream* out){
+    while(1){
+      write(out, "Process A\n");
+    }
+}
+
+void testProcessB(stream* out){
+    while(1){
+      write(out, "Process B\n");
+    }
+}
+
 void main(struct kernel_args a){
   args = a;
+  memoryInit(args.safeMemoryOffset);
   consoleInit(&args);
   clear();
-  memoryInit(args.safeMemoryOffset);
-  kernelStackBottom = malloc(2048);
+
+  //Protect video memory
+  mallocAt((uint64_t)args.videoMemory, args.pixelsPerScanLine*sizeof(struct pixel)*args.videoHeight);
+  kernelStackBottom = (uint64_t)malloc(2048);
   kernelStackTop = kernelStackBottom + 2048 - 8;
   loadGdt((uint64_t)&stage2);
 }
 
 void stage2(){
   loadTss();
+  allowKernelPageAccess();
+
   print("Resolution ");
   printNum(args.videoWidth);
   print("x");
@@ -26,22 +50,13 @@ void stage2(){
   print(" PPSL ");
   printNum(args.pixelsPerScanLine);
   print("\n");
+
   print("Safe memory starts at ");
   printHex((uint64_t)args.safeMemoryOffset);
   print("\n");
   print("OndrOS Kernel is running and able to print stuff. Yay!\n");
-  setBackground(12, 196, 43);
-  setForeground(255, 0, 89);
-  print("Colorful\n");
-  setBackground(12, 21, 196);
-  setForeground(255, 162, 0);
-  setCursorPosition(2,1);
-  setSize(32);
-  print("Big");
-  setSize(8);
   setBackground(0,0,0);
-  setForeground(255, 0,0);
-  setCursorPosition(0, 10);
+  setForeground(255, 255,0);
   setConsolePrefix("[CPU setup] ");
   print("\nInstalling interrputs.\n");
   installInterrupts();
@@ -51,6 +66,7 @@ void stage2(){
   initKeyboard();
   print("Enabling interrupts.\n");
   asm("sti");
+
   setConsolePrefix("[Kernel setup] ");
   print("The time is now ");
   printNum(getMicroseconds());
@@ -67,9 +83,17 @@ void stage2(){
   free(b);
   print("Freeing all.\n");
   printMemory();
-  print("Halting CPU.");
-  setConsolePrefix("kernel> ");
+  print("Creating process.\n");
+  struct process* p = createProcess("testA", &testProcessA);
+  struct process* p2 = createProcess("testB", &testProcessB);
+  print("Starting scheduler.\n");
+  initScheduler();
+
+  registerProcess(p);
+  registerProcess(p2);
+  setConsolePrefix("");
   setForeground(255, 255, 255);
-  print("\n");
-  asm("hlt");
+  startScheduler();
+
+  while(1)asm("hlt");
 }

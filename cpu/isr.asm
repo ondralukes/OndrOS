@@ -3,12 +3,20 @@
 
 isr_common:
   ;save state
+  push rbp
   push rdi
   push rsi
   push rbx
   push rdx
   push rcx
   push rax
+
+  mov ax, 0x10
+  mov ds, ax
+  mov es, ax
+  mov fs, ax
+  mov gs, ax
+  mov ss, ax
 
   call isrHandler
 
@@ -18,6 +26,7 @@ isr_common:
   pop rbx
   pop rsi
   pop rdi
+  pop rbp
 
   add rsp, 16
   sti
@@ -25,12 +34,20 @@ isr_common:
 
 irq_common:
   ;save state
+  push rbp
   push rdi
   push rsi
   push rbx
   push rdx
   push rcx
   push rax
+
+  mov ax, 0x10
+  mov ds, ax
+  mov es, ax
+  mov fs, ax
+  mov gs, ax
+  mov ss, ax
 
   call irqHandler
 
@@ -40,6 +57,7 @@ irq_common:
   pop rbx
   pop rsi
   pop rdi
+  pop rbp
 
   add rsp, 16
   sti

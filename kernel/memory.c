@@ -20,6 +20,47 @@ uint16_t getFreeIndex(){
 }
 
 void* malloc(uint64_t size){
+  return mallocAligned(size, 1);
+}
+
+void* mallocAligned(uint64_t size,uint64_t align){
+  memory_block* block = &memoryBlocks[0];
+  uint64_t base = 0;
+  uint64_t max = 0;
+  while(block->next != S_EMPTY){
+
+    base = block->base+block->size;
+    if(base % align != 0){
+      base += align - (base % align);
+    }
+    if(block->next == S_END){
+      max = ~0;
+    } else {
+      max = memoryBlocks[block->next].base;
+    }
+    uint64_t possibleSize = max - base;
+    if(possibleSize > size && max > base){
+      break;
+    }
+    if(block->next == S_END) break;
+    block = &memoryBlocks[block->next];
+  }
+
+  uint64_t freeIndex = getFreeIndex();
+
+  memory_block* new = &memoryBlocks[freeIndex];
+  new->base = base;
+  new->size = size;
+  if(block->next != S_END && block->next != S_EMPTY){
+    new->next = block->next;
+  } else {
+    new->next = S_END;
+  }
+  if(block != new) block->next = freeIndex;
+  return (void*)new->base;
+}
+
+void* mallocAt(uint64_t addr, uint64_t size){
   memory_block* block = &memoryBlocks[0];
   uint64_t base = 0;
   uint64_t max = 0;
@@ -31,10 +72,15 @@ void* malloc(uint64_t size){
     } else {
       max = memoryBlocks[block->next].base;
     }
-    uint64_t possibleSize = max - base;
-    if(possibleSize > size){
-      break;
+    if(addr >= base && addr < max){
+      uint64_t possibleSize = max - addr;
+      if(possibleSize > size){
+        break;
+      } else {
+        return 0;
+      }
     }
+
     if(block->next == S_END) break;
     block = &memoryBlocks[block->next];
   }
@@ -42,7 +88,7 @@ void* malloc(uint64_t size){
   uint64_t freeIndex = getFreeIndex();
 
   memory_block* new = &memoryBlocks[freeIndex];
-  new->base = base;
+  new->base = addr;
   new->size = size;
   if(block->next != S_END && block->next != S_EMPTY){
     new->next = block->next;
@@ -74,11 +120,11 @@ void printMemory(){
   uint64_t blocks = 0;
   while(block->next != S_END){
     block = &memoryBlocks[block->next];
-    print("Block at ");
-    printHex((uint64_t)block->base);
-    print(" size ");
-    printNum(block->size);
-    print("\n");
+    // print("Block at ");
+    // printHex((uint64_t)block->base);
+    // print(" size ");
+    // printNum(block->size);
+    // print("\n");
     allocated += block->size;
     blocks++;
   }

@@ -20,6 +20,8 @@ memory_block memoryBlocks[BLOCK_COUNT];
 void memoryInit(void* safeMemory);
 
 void* malloc(uint64_t size);
+void* mallocAligned(uint64_t size, uint64_t align);
+void* mallocAt(uint64_t addr, uint64_t size);
 void free(void* base);
 void printMemory();
 #endif

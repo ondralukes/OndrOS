@@ -67,6 +67,8 @@ void installInterrupts(){
   setInterrupt(46, (uint64_t) irq14);
   setInterrupt(47, (uint64_t) irq15);
 
+  setInterruptHandler(14, pageFault);
+
   applyInterrupts();
 }
 
@@ -93,7 +95,7 @@ void setInterruptHandler(int index, isr isr){
 void isrHandler(registers regs){
   if(isrs[regs.intNum] != 0){
     isrs[regs.intNum](regs);
-  } else {
+  } else if(regs.intNum != 4){
     char* exceptions[32];
     exceptions[0] = "Division by zero";
     exceptions[1] = "Debug";
@@ -137,7 +139,8 @@ void isrHandler(registers regs){
     print(" rip="); printHex(regs.rip);
 
     print("\ncs="); printHex(regs.cs);
-    print(" flags="); printHex(regs.eflags);
+    print(" flags="); printHex(regs.rflags);
+    print(" userrsp="); printHex(regs.userrsp);
     print("\n128 bytes from RIP:\n");
     uint8_t *ptr = (uint8_t*)regs.rip;
     for(uint64_t i = 0;i<128;i++){
@@ -163,4 +166,13 @@ void irqHandler(registers regs){
   if(isrs[regs.intNum] != 0){
     isrs[regs.intNum](regs);
   }
+}
+
+void pageFault(registers regs){
+  uint64_t addr;
+  asm volatile (
+    "movq %%cr2, %%rax\n\t"
+    "movq %%rax, %0"
+    :"=m"(addr));
+  allowPageAccess(addr);
 }

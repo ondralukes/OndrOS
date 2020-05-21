@@ -9,7 +9,7 @@ void loadGdt(uint64_t next){
   gdt.gdt[0].limit1flags = 0;
   gdt.gdt[0].base2 = 0;
 
-  //code
+  //kernel code
   gdt.gdt[1].limit0 = 0xffff;
   gdt.gdt[1].base0 = 0;
   gdt.gdt[1].base1 = 0;
@@ -17,13 +17,29 @@ void loadGdt(uint64_t next){
   gdt.gdt[1].limit1flags = 0b10101111;
   gdt.gdt[1].base2 = 0;
 
-  //data
+  //kernel data
   gdt.gdt[2].limit0 = 0xffff;
   gdt.gdt[2].base0 = 0;
   gdt.gdt[2].base1 = 0;
   gdt.gdt[2].access = 0b10010010;
   gdt.gdt[2].limit1flags = 0b11001111;
   gdt.gdt[2].base2 = 0;
+
+  //user code
+  gdt.gdt[3].limit0 = 0xffff;
+  gdt.gdt[3].base0 = 0;
+  gdt.gdt[3].base1 = 0;
+  gdt.gdt[3].access = 0b11111010;
+  gdt.gdt[3].limit1flags = 0b10101111;
+  gdt.gdt[3].base2 = 0;
+
+  //user data
+  gdt.gdt[4].limit0 = 0xffff;
+  gdt.gdt[4].base0 = 0;
+  gdt.gdt[4].base1 = 0;
+  gdt.gdt[4].access = 0b11110010;
+  gdt.gdt[4].limit1flags = 0b11001111;
+  gdt.gdt[4].base2 = 0;
 
   //tss
   uint64_t tssOffset = (uint64_t)&tss;
@@ -76,4 +92,13 @@ void loadTss(){
 
   tss.iopboff = sizeof(tss_t);
   asm volatile("ltr %%ax" : : "a"(TSS_SEG));
+}
+
+void allowKernelPageAccess(){
+  //Allow kernel to write everywhere
+  asm volatile (
+    "mov %cr0, %rax\n\t"
+    "andq $0xfffffffffffeffff, %rax\n\t"
+    "mov %rax, %cr0"
+  );
 }

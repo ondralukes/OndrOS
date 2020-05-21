@@ -2,11 +2,14 @@
 #define GDT_H
 
 #define KERNEL_CS 0x08
-#define KERNEL_DS 0x10
-#define TSS_SEG 0x18
+#define KERNEL_DS KERNEL_CS + 8
+#define USER_CS   KERNEL_DS + 8
+#define USER_DS   USER_CS + 8
+#define TSS_SEG   USER_DS + 8
 
 #include "../kernel/types.h"
 #include "../kernel/kernel.h"
+#include "../kernel/memory.h"
 
 typedef struct {
   uint16_t limit;
@@ -52,12 +55,13 @@ typedef struct {
 } __attribute__((packed)) tss_desc_t;
 
 tss_t tss;
-struct full_gdt {
-  gdt_entry gdt[3];
+struct __attribute__((packed)) full_gdt {
+  gdt_entry gdt[5];
   tss_desc_t tss_desc;
 } gdt;
 gdt_descriptor gdt_desc;
 
 void loadGdt(uint64_t next);
 void loadTss();
+void allowKernelPageAccess();
 #endif

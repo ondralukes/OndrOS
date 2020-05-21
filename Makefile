@@ -32,7 +32,7 @@ cpu/%.o: cpu/%.asm
 		nasm -felf64 -o $@ $^
 
 kernel.elf: $(KERNELCFILES) $(KERNELASMOFILES)
-	gcc -ffreestanding -nodefaultlibs -nostdlib -e main $(KERNELASMOFILES) ${KERNELCFILES} -o kernel.elf
+	gcc -ffreestanding -mno-red-zone -nodefaultlibs -nostdlib -e main $(KERNELASMOFILES) ${KERNELCFILES} -o kernel.elf
 
 clean:
 	rm -f fat.img

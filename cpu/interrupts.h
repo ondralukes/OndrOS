@@ -3,6 +3,7 @@
 #include "../io/console.h"
 #include "init.h"
 #include "port.h"
+#include "paging.h"
 
 typedef struct {
   uint16_t offset1;
@@ -20,10 +21,13 @@ typedef struct {
 } __attribute__((packed)) int_table;
 
 typedef struct {
-  uint64_t rax, rcx, rdx, rbx, rsi, rdi;
+  uint64_t rax, rcx, rdx, rbx, rsi, rdi, rbp;
   uint64_t intNum, errorCode;
   uint64_t rip;
-  uint32_t cs, eflags, useresp, ss;
+  uint32_t cs;
+  uint64_t rflags;
+  uint64_t userrsp;
+  uint32_t ss;
 } registers;
 
 typedef void (*isr)(registers);
@@ -39,6 +43,8 @@ void applyInterrupts();
 
 void isrHandler(registers regs);
 void irqHandler(registers regs);
+
+void pageFault(registers regs);
 
 extern void isr0();
 extern void isr1();

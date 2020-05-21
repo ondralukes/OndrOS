@@ -2,6 +2,7 @@
 #define BMP_H
 
 #include "../kernel/types.h"
+#include "../kernel/memory.h"
 struct bmp_pixel{
   uint8_t B;
   uint8_t G;
