@@ -85,7 +85,7 @@ void allowPageAccess(uint64_t addr){
   uint64_t * pages = (uint64_t*)((uint64_t)dir & 0x7FFFFFFFFFFFF000);
 
   for(uint64_t l = 0;l<512;l++){
-    pages[l] = pages[l]|0b100;
+    pages[l] = pages[l]|0b110;
   }
 
   setForeground(255,255,255);

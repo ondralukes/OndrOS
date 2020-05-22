@@ -15,12 +15,11 @@ void consoleInit(struct kernel_args* args){
 }
 
 void clear(){
-  for(uint64_t x = 0;x<pixelsPerScanLine;x++){
-    for(uint64_t y = 0;y<screenHeight;y++){
-      struct pixel* p = videoMem+y*pixelsPerScanLine+x;
-      *p = bg;
-    }
-  }
+  uint64_t size = pixelsPerScanLine*screenHeight*sizeof(struct pixel);
+  uint64_t fill;
+  *((struct pixel*)&fill) = bg;
+
+  memset(videoMem, fill << 32 | fill, size);
 }
 
 void setCursorPosition(uint64_t x, uint8_t y){
@@ -174,17 +173,17 @@ void setBackground(uint8_t r, uint8_t g, uint8_t b){
 
 void scroll(){
   uint64_t lineHeight = fontSize * 2;
-  uint64_t size = (screenHeight - lineHeight)*pixelsPerScanLine;
-  for(uint64_t i = 0;i < size;i++){
-    struct pixel* src = videoMem+i+lineHeight*pixelsPerScanLine;
-    struct pixel* dest = videoMem+i;
-    *dest = *src;
-  }
-  uint64_t lineSize = lineHeight*pixelsPerScanLine;
-  for(uint64_t i = 0;i < size;i++){
-    struct pixel* p = videoMem+size+i;
-    *p = bg;
-  }
+  uint64_t size = (screenHeight - lineHeight)*pixelsPerScanLine*sizeof(struct pixel);
+  uint64_t dest = (uint64_t) videoMem;
+  uint64_t src = dest+(lineHeight*pixelsPerScanLine*sizeof(struct pixel));
+  memcpy((void*)dest, (void*)src, size);
+
+  uint64_t lineSize = lineHeight*pixelsPerScanLine*sizeof(struct pixel);
+  void* newLineStart = (uint64_t)videoMem + (screenHeight - lineHeight)*pixelsPerScanLine*sizeof(struct pixel);
+  uint64_t fill;
+  *((struct pixel*)&fill) = bg;
+
+  memset(newLineStart, fill<<32|fill, lineSize);
 }
 
 void beginError(){

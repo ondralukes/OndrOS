@@ -7,13 +7,6 @@
 #include "time.h"
 #include "memory.h"
 
-void wait(){
-  uint64_t x = 0;
-  for(uint64_t i = 0;i<100000;i++){
-    x+=i;
-  }
-}
-
 void testProcessA(stream* out){
     while(1){
       write(out, "Process A\n");
@@ -28,7 +21,7 @@ void testProcessB(stream* out){
 
 void main(struct kernel_args a){
   args = a;
-  memoryInit(args.safeMemoryOffset);
+  memoryInit(0x80000000);
   consoleInit(&args);
   clear();
 

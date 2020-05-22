@@ -56,7 +56,9 @@ void flushProcessOut(){
   struct processNode* ptr = processList;
   while(ptr->p != NULL){
     stream* s = ptr->p->out;
-    for(uint64_t i =0;i<s->size;i++) printChar(s->buffer[i]);
+    for(uint64_t i =0;i<s->size;i++){
+       printChar(s->buffer[i]);
+     }
     s->size = 0;
     ptr = ptr->next;
     if(ptr == NULL) break;

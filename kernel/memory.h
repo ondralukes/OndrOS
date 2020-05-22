@@ -17,6 +17,7 @@ typedef struct {
 
 memory_block memoryBlocks[BLOCK_COUNT];
 
+uint64_t safeMemoryOffset;
 void memoryInit(void* safeMemory);
 
 void* malloc(uint64_t size);
@@ -24,4 +25,7 @@ void* mallocAligned(uint64_t size, uint64_t align);
 void* mallocAt(uint64_t addr, uint64_t size);
 void free(void* base);
 void printMemory();
+
+void memcpy(void* dest, void* src, uint64_t size);
+void memset(void* dest, uint64_t val, uint64_t size);
 #endif

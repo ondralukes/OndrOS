@@ -9,6 +9,7 @@ void memoryInit(void* safeMemory){
   memoryBlocks[0].base = (uint64_t)safeMemory;
   memoryBlocks[0].size = 0;
   memoryBlocks[0].next = S_END;
+  safeMemoryOffset = (uint64_t) safeMemory;
 }
 
 uint16_t getFreeIndex(){
@@ -39,7 +40,7 @@ void* mallocAligned(uint64_t size,uint64_t align){
       max = memoryBlocks[block->next].base;
     }
     uint64_t possibleSize = max - base;
-    if(possibleSize > size && max > base){
+    if(possibleSize > size && max > base && base > safeMemoryOffset){
       break;
     }
     if(block->next == S_END) break;
@@ -133,4 +134,77 @@ void printMemory(){
   print(" in ");
   printNum(blocks);
   print(" blocks.\n");
+}
+
+void memcpy(void* dest, void* src, uint64_t size){
+  uint64_t qlimit = (uint64_t)src + (size/8)*8;
+  uint64_t dlimit = (uint64_t)src + (size/4)*4;
+  uint64_t wlimit = (uint64_t)src + (size/2)*2;
+  uint64_t blimit = (uint64_t)src + size;
+
+  asm volatile(
+    "movq %4, %%rsi\n\t"
+    "movq %5, %%rdi\n\t"
+    "cld\n\t"
+    "1:\n\t"
+    "cmpq %%rsi, %0\n\t"
+    "je 2f\n\t"
+    "movsq\n\t"
+    "jmp 1b\n\t"
+    "2:\n\t"
+
+    "cmpq %%rsi, %1\n\t"
+    "je 3f\n\t"
+    "movsl\n\t"
+    "jmp 2b\n\t"
+    "3:\n\t"
+
+    "cmpq %%rsi, %2\n\t"
+    "je 4f\n\t"
+    "movsw\n\t"
+    "jmp 3b\n\t"
+    "4:\n\t"
+
+    "cmpq %%rsi, %3\n\t"
+    "je 5f\n\t"
+    "movsb\n\t"
+    "jmp 4b\n\t"
+    "5:\n\t"
+    :: "m"(qlimit), "m"(dlimit), "m"(wlimit), "m"(blimit), "m"(src), "m"(dest));
+}
+
+void memset(void* dest, uint64_t val, uint64_t size){
+  uint64_t qlimit = (uint64_t)dest + (size/8)*8;
+  uint64_t dlimit = (uint64_t)dest + (size/4)*4;
+  uint64_t wlimit = (uint64_t)dest + (size/2)*2;
+  uint64_t blimit = (uint64_t)dest + size;
+
+  asm volatile(
+    "movq %4, %%rdi\n\t"
+    "cld\n\t"
+    "1:\n\t"
+    "cmpq %%rdi, %0\n\t"
+    "je 2f\n\t"
+    "stosq\n\t"
+    "jmp 1b\n\t"
+    "2:\n\t"
+
+    "cmpq %%rdi, %1\n\t"
+    "je 3f\n\t"
+    "stosl\n\t"
+    "jmp 2b\n\t"
+    "3:\n\t"
+
+    "cmpq %%rdi, %2\n\t"
+    "je 4f\n\t"
+    "stosw\n\t"
+    "jmp 3b\n\t"
+    "4:\n\t"
+
+    "cmpq %%rdi, %3\n\t"
+    "je 5f\n\t"
+    "stosb\n\t"
+    "jmp 4b\n\t"
+    "5:\n\t"
+    :: "m"(qlimit), "m"(dlimit), "m"(wlimit), "m"(blimit), "m"(dest), "a"(val));
 }
