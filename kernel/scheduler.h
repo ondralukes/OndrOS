@@ -4,6 +4,7 @@
 #include "../io/console.h"
 #include "memory.h"
 #include "process.h"
+#include "time.h"
 #include <stddef.h>
 
 #define SCHEDULER_INTERVAL 10000 // 50 ms

@@ -17,10 +17,11 @@ void schedulerTick(registers regs){
   } else {
     currentProcessNode = currentProcessNode->next;
   }
+
   if(processToRun == NULL){
     asm("sti");
     asm("hlt");
-  } else {
+  } else if(processToRun->sleepUntil < getMicroseconds()){
     resumeProcess(processToRun);
   }
 }

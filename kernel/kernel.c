@@ -1,5 +1,6 @@
 #include "kernel.h"
 #include "types.h"
+#include "process.h"
 #include "../io/console.h"
 #include "../io/keyboard.h"
 #include "../cpu/interrupts.h"
@@ -7,14 +8,18 @@
 #include "time.h"
 #include "memory.h"
 
-void testProcessA(stream* out){
+void testProcessA(struct process* p){
+  stream* out = p->out;
     while(1){
+      sleep(p, 500000);
       write(out, "Process A\n");
     }
 }
 
-void testProcessB(stream* out){
+void testProcessB(struct process* p){
+  stream* out = p->out;
     while(1){
+      sleep(p, 1000000);
       write(out, "Process B\n");
     }
 }

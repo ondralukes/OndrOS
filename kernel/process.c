@@ -20,7 +20,7 @@ struct process* createProcess(char* name, void* entrypoint){
   p->rdx = 0;
   p->rbx = 0;
   p->rsi = 0;
-  p->rdi = p->out;
+  p->rdi = p;
   p->rsp = stackBase - 8;
   p->rbp = stackBase;
 
@@ -31,7 +31,6 @@ struct process* createProcess(char* name, void* entrypoint){
 
 void pauseProcess(registers regs){
   if(currentProcess == NULL) return;
-  printChar('\n');
   struct process* p = currentProcess;
   p->rax = regs.rax;
   p->rcx = regs.rcx;
@@ -95,4 +94,9 @@ void resumeProcess(struct process* p){
     "a"(USER_DS | 0b11),
     "d"(USER_CS | 0b11)
   );
+}
+
+void sleep(struct process*p, uint64_t us){
+  p->sleepUntil = getMicroseconds() + us;
+  while(p->sleepUntil > getMicroseconds());
 }
