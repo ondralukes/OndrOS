@@ -7,6 +7,10 @@ void schedulerTick(registers regs){
   if(schedulerEnabled == 0) return;
 
   pauseProcess(regs);
+  if(currentProcessNode->p->state == Ended){
+    flush(currentProcessNode->p->out);
+    removeProcess(currentProcessNode->p);
+  }
   struct process* processToRun = NULL;
   if(currentProcessNode->p == NULL){
     currentProcessNode = processList;
@@ -52,15 +56,37 @@ void registerProcess(struct process* p){
   ptr->p = p;
 }
 
+void removeProcess(struct process* p){
+  struct processNode* ptr = processList;
+  if(ptr->p == p){
+    if(ptr->next == NULL){
+      processList->p = NULL;
+    } else {
+      processList = ptr->next;
+    }
+    destroyProcess(p);
+    return;
+  }
+  struct processNode* prev = processList;
+  ptr = ptr->next;
+  while(ptr->p != NULL){
+    if(ptr->p == p){
+      ptr->p = NULL;
+      prev->next = ptr->next;
+      break;
+    }
+    prev = ptr;
+    ptr = ptr->next;
+  }
+  destroyProcess(p);
+}
+
 void flushProcessOut(){
   if(schedulerEnabled == 0) return;
   struct processNode* ptr = processList;
   while(ptr->p != NULL){
     stream* s = ptr->p->out;
-    for(uint64_t i =0;i<s->size;i++){
-       printChar(s->buffer[i]);
-     }
-    s->size = 0;
+    flush(s);
     ptr = ptr->next;
     if(ptr == NULL) break;
   }

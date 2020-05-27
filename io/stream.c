@@ -19,3 +19,10 @@ stream* createStream(){
   s->size = 0;
   return s;
 }
+
+void flush(stream* s){
+  for(uint64_t i =0;i<s->size;i++){
+     printChar(s->buffer[i]);
+   }
+  s->size = 0;
+}

@@ -8,6 +8,7 @@
 
 #include <stddef.h>
 
+enum ProcessState {Running=0, Ended=1};
 struct process{
   char* name;
   uint64_t rax, rcx, rdx, rbx, rsi, rdi, rsp, rbp;
@@ -15,9 +16,11 @@ struct process{
   void* stack;
   stream* out;
   uint64_t sleepUntil;
+  enum ProcessState state;
 };
 
 struct process* createProcess();
+void destroyProcess(struct process* p);
 void pauseProcess(registers regs);
 void resumeProcess(struct process* p);
 

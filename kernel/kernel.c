@@ -10,18 +10,24 @@
 
 void testProcessA(struct process* p){
   stream* out = p->out;
-    while(1){
+  uint64_t i = 0;
+    while(i < 5){
       sleep(p, 500000);
       write(out, "Process A\n");
+      i++;
     }
+    write(out, "Process A go bye bye.\n");
 }
 
 void testProcessB(struct process* p){
   stream* out = p->out;
-    while(1){
+  uint64_t i = 0;
+    while(i < 5){
       sleep(p, 1000000);
       write(out, "Process B\n");
+      i++;
     }
+  write(out, "Process B go bye bye.\n");
 }
 
 void main(struct kernel_args a){

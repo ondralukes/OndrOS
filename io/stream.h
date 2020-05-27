@@ -3,6 +3,8 @@
 
 #include "../kernel/memory.h"
 #include "../kernel/types.h"
+#include "console.h"
+
 typedef struct{
   uint8_t buffer[128];
   uint64_t size;
@@ -10,4 +12,5 @@ typedef struct{
 
 stream* createStream();
 void write(stream* s, uint8_t * str);
+void flush(stream* s);
 #endif

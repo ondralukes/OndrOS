@@ -3,13 +3,14 @@
 struct process* currentProcess = NULL;
 
 static void processEndCallback(){
-  print("Current process has ended.\n");
+  currentProcess->state = Ended;
   while(1);
 }
 
 struct process* createProcess(char* name, void* entrypoint){
   struct process* p = malloc(sizeof(struct process));
   p->name = name;
+  p->state = Running;
   p->stack = malloc(1024*1024);
   p->out = createStream();
   uint64_t stackBase = (uint64_t)p->stack;
@@ -99,4 +100,9 @@ void resumeProcess(struct process* p){
 void sleep(struct process*p, uint64_t us){
   p->sleepUntil = getMicroseconds() + us;
   while(p->sleepUntil > getMicroseconds());
+}
+
+void destroyProcess(struct process* p){
+  free(p->out);
+  free(p);
 }

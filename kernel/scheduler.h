@@ -20,5 +20,6 @@ void schedulerTick(registers regs);
 void startScheduler();
 
 void registerProcess(struct process* p);
+void removeProcess(struct process* p);
 void flushProcessOut();
 #endif
