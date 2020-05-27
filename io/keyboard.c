@@ -3,11 +3,12 @@
 void keyboardCallback(registers regs){
   uint8_t scanCode = byteIn(0x60);
   uint8_t ch = scanCodeToChar(scanCode);
-  if(ch != 0x0) printChar(ch);
-  if(ch == 'e') ch = 5/0;
+  if(ch == 0) return;
+  write(keyboardInput, ch);
 }
 
 void initKeyboard(){
+  keyboardInput = createStream();
   setInterruptHandler(33, keyboardCallback);
 }
 

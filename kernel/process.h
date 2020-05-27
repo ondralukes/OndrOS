@@ -3,6 +3,7 @@
 
 #include "../cpu/interrupts.h"
 #include "../io/stream.h"
+#include "../io/keyboard.h"
 #include "memory.h"
 #include "time.h"
 
@@ -15,6 +16,7 @@ struct process{
   uint64_t rip;
   void* stack;
   stream* out;
+  stream* in;
   uint64_t sleepUntil;
   enum ProcessState state;
 };

@@ -11,6 +11,9 @@ typedef struct{
 } stream;
 
 stream* createStream();
-void write(stream* s, uint8_t * str);
+void write(stream* s, uint8_t c);
+void writeString(stream* s, uint8_t * str);
+void writeNum(stream*s, uint64_t n);
+uint8_t read(stream * s);
 void flush(stream* s);
 #endif

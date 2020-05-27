@@ -10,24 +10,29 @@
 
 void testProcessA(struct process* p){
   stream* out = p->out;
-  uint64_t i = 0;
-    while(i < 5){
-      sleep(p, 500000);
-      write(out, "Process A\n");
-      i++;
-    }
-    write(out, "Process A go bye bye.\n");
+  int i = 10;
+  while(i >= 0){
+    sleep(p, 1000000);
+    writeString(out, "Self-destruct in ");
+    writeNum(out, i);
+    write(out, '\n');
+    i--;
+  }
+  i = 5/0;
 }
 
 void testProcessB(struct process* p){
   stream* out = p->out;
-  uint64_t i = 0;
-    while(i < 5){
-      sleep(p, 1000000);
-      write(out, "Process B\n");
-      i++;
+  stream* in = p->in;
+  writeString(out, "Write something, or press enter to exit:");
+  while(1){
+    while(in->size == 0){
+      sleep(p, 10000);
     }
-  write(out, "Process B go bye bye.\n");
+    char c = read(in);
+    write(out, c);
+    if(c == '\n') break;
+  }
 }
 
 void main(struct kernel_args a){
@@ -88,8 +93,8 @@ void stage2(){
   print("Freeing all.\n");
   printMemory();
   print("Creating process.\n");
-  struct process* p = createProcess("testA", &testProcessA);
-  struct process* p2 = createProcess("testB", &testProcessB);
+  struct process* p = createProcess("destructor", &testProcessA);
+  struct process* p2 = createProcess("keyboardTest", &testProcessB);
   print("Starting scheduler.\n");
   initScheduler();
 

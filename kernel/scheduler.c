@@ -9,6 +9,11 @@ void schedulerTick(registers regs){
   pauseProcess(regs);
   if(currentProcessNode->p->state == Ended){
     flush(currentProcessNode->p->out);
+    setForeground(128,128,128);
+    print("[Process ");
+    print(currentProcessNode->p->name);
+    print(" has ended.]\n");
+    setForeground(255,255,255);
     removeProcess(currentProcessNode->p);
   }
   struct process* processToRun = NULL;
@@ -81,12 +86,24 @@ void removeProcess(struct process* p){
   destroyProcess(p);
 }
 
+struct process* lastFlushed = NULL;
 void flushProcessOut(){
   if(schedulerEnabled == 0) return;
   struct processNode* ptr = processList;
   while(ptr->p != NULL){
-    stream* s = ptr->p->out;
-    flush(s);
+    struct process* p = ptr->p;
+    stream* s = p->out;
+    if(s->size > 0){
+      if(p != lastFlushed){
+        setForeground(128,128,128);
+        print("\n[Output of ");
+        print(ptr->p->name);
+        print("]\n");
+        setForeground(255,255,255);
+        lastFlushed = p;
+      }
+      flush(s);
+    }
     ptr = ptr->next;
     if(ptr == NULL) break;
   }
