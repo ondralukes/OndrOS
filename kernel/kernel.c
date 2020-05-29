@@ -3,6 +3,7 @@
 #include "process.h"
 #include "../io/console.h"
 #include "../io/keyboard.h"
+#include "../io/ata.h"
 #include "../cpu/interrupts.h"
 #include "../cpu/init.h"
 #include "time.h"
@@ -80,19 +81,15 @@ void stage2(){
   print("The time is now ");
   printNum(getMicroseconds());
   print(" us\n");
-  print("Press 'e' to divide by zero.\n");
-  print("Testing malloc\n");
-  void* ptr = malloc(5);
-  free(ptr);
-  void* a = malloc(5);
-  free(malloc(5));
-  void* b = malloc(1024);
-  printMemory();
-  free(a);
-  free(b);
-  print("Freeing all.\n");
+  print("ATA setup.\n");
+  AtaIdentify();
+  AtaRead();
+  print("Continuing in 2 seconds.\n");
+  uint64_t start = getMicroseconds();
+  while(getMicroseconds() - start < 2000000) asm("hlt");
   printMemory();
   print("Creating process.\n");
+
   struct process* p = createProcess("destructor", &testProcessA);
   struct process* p2 = createProcess("keyboardTest", &testProcessB);
   print("Starting scheduler.\n");

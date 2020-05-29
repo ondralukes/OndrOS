@@ -14,6 +14,7 @@ struct process* createProcess(char* name, void* entrypoint){
   p->stack = malloc(1024*1024);
   p->out = createStream();
   p->in = keyboardInput;
+  p->sleepUntil = 0;
   uint64_t stackBase = (uint64_t)p->stack;
   stackBase += 1024*1024 - 16;
   p->rip = (uint64_t) entrypoint;
