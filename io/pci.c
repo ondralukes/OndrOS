@@ -3,16 +3,18 @@
 void pciCheck(){
   for(uint32_t bus = 0; bus < 256; bus++){
     for(uint32_t slot = 0; slot < 32; slot++){
-      uint16_t vendor = pciReadWordConfig(bus, slot, 0, 0);
+      for(uint32_t func = 0;func < 8;func++){
+      uint16_t vendor = pciReadWordConfig(bus, slot, func, 0);
       if(vendor == 0xffff) continue;
-      uint16_t device = pciReadWordConfig(bus, slot, 0, 2);
+      uint16_t device = pciReadWordConfig(bus, slot, func, 2);
 
-      uint8_t classCode = pciReadWordConfig(bus, slot, 0, 0x8);
-      print("Bus ");
+      uint8_t classCode = pciReadWordConfig(bus, slot, func, 10) >> 8;
       printNum(bus);
-      print(" slot ");
+      print(".");
       printNum(slot);
-      print(" : ");
+      print(".");
+      printNum(func);
+      print(": ");
       switch(classCode){
         case 0x0:
           print("Unclassified");
@@ -84,12 +86,15 @@ void pciCheck(){
           print("Unknown class code");
           break;
       }
-      print(" vendor=");
+      print(" (");
+      printHex(classCode);
+      print(") vendor=");
       printHex(vendor);
       print(" device=");
       printHex(device);
       print("\n");
     }
+  }
   }
 }
 
