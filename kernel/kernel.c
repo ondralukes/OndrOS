@@ -4,6 +4,7 @@
 #include "../io/console.h"
 #include "../io/keyboard.h"
 #include "../io/ata.h"
+#include "../io/pci.h"
 #include "../cpu/interrupts.h"
 #include "../cpu/init.h"
 #include "time.h"
@@ -87,6 +88,11 @@ void stage2(){
   print("Continuing in 2 seconds.\n");
   uint64_t start = getMicroseconds();
   while(getMicroseconds() - start < 2000000) asm("hlt");
+  print("PCI check.\n");
+  pciCheck();
+  print("Continuing in 5 seconds.\n");
+  start = getMicroseconds();
+  while(getMicroseconds() - start < 5000000) asm("hlt");
   printMemory();
   print("Creating process.\n");
 
