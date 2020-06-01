@@ -1,10 +1,10 @@
 #ifndef KERNEL_H
 #define KERNEL_H
 #include "types.h"
-struct kernel_args args;
+extern struct kernel_args args;
 
-uint64_t kernelStackBottom;
-uint64_t kernelStackTop;
+extern uint64_t kernelStackBottom;
+extern uint64_t kernelStackTop;
 
 void stage2();
 #endif

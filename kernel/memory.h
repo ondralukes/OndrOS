@@ -15,9 +15,9 @@ typedef struct {
   uint32_t next;
 } memory_block;
 
-memory_block memoryBlocks[BLOCK_COUNT];
+extern memory_block memoryBlocks[BLOCK_COUNT];
 
-uint64_t safeMemoryOffset;
+extern uint64_t safeMemoryOffset;
 void memoryInit(void* safeMemory);
 
 void* malloc(uint64_t size);

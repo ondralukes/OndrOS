@@ -1,5 +1,19 @@
 #include "console.h"
 
+struct pixel fg;
+struct pixel bg;
+
+uint64_t fontSize;
+uint64_t maxCurX;
+uint64_t maxCurY;
+uint64_t minCurX;
+uint64_t curX;
+uint64_t curY;
+struct bmp font;
+struct pixel* videoMem;
+uint64_t pixelsPerScanLine;
+uint64_t screenHeight;
+
 char * consoleLinePrefix;
 
 void consoleInit(struct kernel_args* args){

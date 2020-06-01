@@ -1,5 +1,9 @@
 #include "interrupts.h"
 
+int_gate interrupts[256];
+int_table interruptTable;
+isr isrs[256];
+
 void installInterrupts(){
   //Remap PIC
   byteOut(0x20, 0x11);

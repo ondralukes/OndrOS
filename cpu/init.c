@@ -1,5 +1,9 @@
 #include "init.h"
 
+tss_t tss;
+struct full_gdt gdt;
+gdt_descriptor gdt_desc;
+
 void loadGdt(uint64_t next){
   asm("cli");
   gdt.gdt[0].limit0 = 0;

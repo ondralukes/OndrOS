@@ -1,5 +1,7 @@
 #include "keyboard.h"
 
+stream* keyboardInput;
+
 void keyboardCallback(registers regs){
   uint8_t scanCode = byteIn(0x60);
   uint8_t ch = scanCodeToChar(scanCode);

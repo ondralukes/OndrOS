@@ -10,6 +10,11 @@
 #include "time.h"
 #include "memory.h"
 
+struct kernel_args args;
+
+uint64_t kernelStackBottom;
+uint64_t kernelStackTop;
+
 void testProcessA(struct process* p){
   stream* out = p->out;
   int i = 10;

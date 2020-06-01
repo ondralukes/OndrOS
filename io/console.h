@@ -10,19 +10,19 @@ struct pixel{
   uint8_t Reserved;
 } __attribute__((__packed__));
 
-struct pixel fg;
-struct pixel bg;
+extern struct pixel fg;
+extern struct pixel bg;
 
-uint64_t fontSize;
-uint64_t maxCurX;
-uint64_t maxCurY;
-uint64_t minCurX;
-uint64_t curX;
-uint64_t curY;
-struct bmp font;
-struct pixel* videoMem;
-uint64_t pixelsPerScanLine;
-uint64_t screenHeight;
+extern uint64_t fontSize;
+extern uint64_t maxCurX;
+extern uint64_t maxCurY;
+extern uint64_t minCurX;
+extern uint64_t curX;
+extern uint64_t curY;
+extern struct bmp font;
+extern struct pixel* videoMem;
+extern uint64_t pixelsPerScanLine;
+extern uint64_t screenHeight;
 
 void consoleInit(struct kernel_args* args);
 void clear();

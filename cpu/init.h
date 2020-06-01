@@ -54,12 +54,14 @@ typedef struct {
   uint32_t reserved;
 } __attribute__((packed)) tss_desc_t;
 
-tss_t tss;
-struct __attribute__((packed)) full_gdt {
+struct full_gdt {
   gdt_entry gdt[5];
   tss_desc_t tss_desc;
-} gdt;
-gdt_descriptor gdt_desc;
+} __attribute__((packed));
+
+extern tss_t tss;
+extern struct full_gdt gdt;
+extern gdt_descriptor gdt_desc;
 
 void loadGdt(uint64_t next);
 void loadTss();

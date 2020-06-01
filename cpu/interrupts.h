@@ -32,9 +32,9 @@ typedef struct {
 
 typedef void (*isr)(registers);
 
-int_gate interrupts[256];
-int_table interruptTable;
-isr isrs[256];
+extern int_gate interrupts[256];
+extern int_table interruptTable;
+extern isr isrs[256];
 
 void installInterrupts();
 void setInterrupt(int index, uint64_t handler);

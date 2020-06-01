@@ -9,5 +9,5 @@ void initKeyboard();
 
 uint8_t scanCodeToChar(uint8_t scanCode);
 
-stream* keyboardInput;
+extern stream* keyboardInput;
 #endif

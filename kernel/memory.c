@@ -1,5 +1,9 @@
 #include "memory.h"
 
+memory_block memoryBlocks[BLOCK_COUNT];
+
+uint64_t safeMemoryOffset;
+
 void memoryInit(void* safeMemory){
   for(uint64_t i = 0;i<BLOCK_COUNT;i++){
     memoryBlocks[i].base = 0;
