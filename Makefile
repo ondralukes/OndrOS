@@ -42,4 +42,7 @@ clean:
 	rm -f kernel.elf
 
 run: fat.img
-	qemu-system-x86_64 -monitor stdio -no-reboot -no-shutdown -net none --bios /usr/share/ovmf/x64/OVMF.fd -drive file=fat.img,format=raw,index=0,media=disk
+	qemu-system-x86_64 -monitor stdio -no-reboot -no-shutdown -net none --bios /usr/share/ovmf/x64/OVMF.fd -usb \
+       -drive if=none,id=stick,file=fat.img  \
+       -device nec-usb-xhci,id=xhci                    \
+       -device usb-storage,bus=xhci.0,drive=stick

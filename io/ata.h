@@ -1,3 +1,6 @@
+#ifndef ATA_H
+#define ATA_H
+
 #include "../cpu/port.h"
 #include "console.h"
 
@@ -64,3 +67,4 @@ void AtaRead();
 void AtaReadSectors(uint64_t lba, uint8_t count, uint8_t* buffer);
 
 void readMbr(struct mbr* mbr);
+#endif

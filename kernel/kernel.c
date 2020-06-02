@@ -88,16 +88,13 @@ void stage2(){
   printNum(getMicroseconds());
   print(" us\n");
   print("ATA setup.\n");
-  AtaIdentify();
-  AtaRead();
-  print("Continuing in 2 seconds.\n");
-  uint64_t start = getMicroseconds();
-  while(getMicroseconds() - start < 2000000) asm("hlt");
+  // AtaIdentify();
+  // AtaRead();
   print("PCI check.\n");
   pciCheck();
-  print("Continuing in 5 seconds.\n");
-  start = getMicroseconds();
-  while(getMicroseconds() - start < 5000000) asm("hlt");
+  print("Continuing in 4 seconds.\n");
+  uint64_t start = getMicroseconds();
+  while(getMicroseconds() - start < 4000000) asm("hlt");
   printMemory();
   print("Creating process.\n");
 
