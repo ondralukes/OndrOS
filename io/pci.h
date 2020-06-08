@@ -3,7 +3,7 @@
 
 #include "../cpu/port.h"
 #include "console.h"
-#include "usb.h"
+#include "xhci.h"
 
 void pciCheck();
 

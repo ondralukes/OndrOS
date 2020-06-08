@@ -14,7 +14,7 @@ void pciCheck(){
         uint8_t subclass = pciReadWordConfig(bus, slot, func, 10) & 0xff;
 
         if(classCode == 0x0c && subclass == 0x03){
-          readUSB(bus, slot, func);
+          checkXHCI(bus, slot, func);
         }
       }
     }
